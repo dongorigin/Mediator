@@ -1,2 +1,5 @@
-include ':app'
+include ':mediator-checker'
 rootProject.name = "ModuleMediator"
+include ':app'
+include ':mediator'
+include ':mediator-annotation'
