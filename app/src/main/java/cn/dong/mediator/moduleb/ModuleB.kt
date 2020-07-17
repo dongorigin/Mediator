@@ -1,5 +1,6 @@
 package cn.dong.mediator.moduleb
 
+import cn.dong.mediator.BaseModule
 import cn.dong.mediator.annotation.ModuleServiceProvider
 
 /**
@@ -8,7 +9,7 @@ import cn.dong.mediator.annotation.ModuleServiceProvider
  * @author zhaodong on 2020/07/02.
  */
 @ModuleServiceProvider(EngineProvider::class, AudioRecorderProvider::class)
-class ModuleB : EngineProvider, AudioRecorderProvider {
+class ModuleB : BaseModule(), EngineProvider, AudioRecorderProvider {
 
     private var _engineService: EngineService? = null
 

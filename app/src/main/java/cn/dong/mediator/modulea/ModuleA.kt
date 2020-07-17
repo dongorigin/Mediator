@@ -1,5 +1,6 @@
 package cn.dong.mediator.modulea
 
+import cn.dong.mediator.BaseModule
 import cn.dong.mediator.annotation.ModuleService
 import cn.dong.mediator.annotation.ModuleServiceProvider
 import cn.dong.mediator.moduleb.AudioRecorderProvider
@@ -10,10 +11,10 @@ import cn.dong.mediator.service
  * @author zhaodong on 2020/07/02.
  */
 @ModuleServiceProvider(ServiceA::class)
-class ModuleA : ServiceA {
+class ModuleA : BaseModule(), ServiceA {
 
-    @ModuleService // 仅用于静态检查
-    val engineProvider: EngineProvider by service()
+    @ModuleService
+    private lateinit var engineProvider: EngineProvider
 
     @ModuleService
     val audioRecorderProvider: AudioRecorderProvider by service()
