@@ -35,19 +35,20 @@ class MediatorCheckerProcessor : AbstractProcessor() {
     }
 
     override fun process(elements: Set<TypeElement>, env: RoundEnvironment): Boolean {
-        messager.printMessage(Kind.NOTE, "mediator checker process start~\n")
+        messager.printMessage(Kind.NOTE, "mediator checker process start~|")
 
         val moduleHolderMap: MutableMap<Element, ModuleHolderClass> = mutableMapOf()
         val moduleMap = mutableMapOf<Element, ModuleClass>()
         // module
         for (element in env.getElementsAnnotatedWith(ModuleServiceProvider::class.java)) {
             val moduleClass = moduleMap.getOrDefault(element, ModuleClass())
-            val annotation = element.getAnnotation(ModuleServiceProvider::class.java)
-            val providerAnnotation = elementUtils.getAllAnnotationMirrors(element)
-                .find { it.annotationType == elementUtils.getTypeElement(ModuleServiceProvider::class.java.name).asType() }
-            val elementValuesWithDefaults =
-                elementUtils.getElementValuesWithDefaults(providerAnnotation)
-            elementValuesWithDefaults.values.first().value
+            val serviceProvider = element.findAnnotationMirror(ModuleServiceProvider::class.java)
+            val provideServices = serviceProvider?.findAnnotationValue("value")
+                ?.getClasses()
+            val optional = serviceProvider
+                ?.findAnnotationValueWithDefaults("optional", elementUtils)
+                ?.value
+            println("element: ${element.simpleName}, services: $provideServices, option=$optional")
         }
 
 //        // module
@@ -82,6 +83,7 @@ class MediatorCheckerProcessor : AbstractProcessor() {
     private fun printMessage(kind: Kind, element: Element, message: String?) {
         processingEnv.messager.printMessage(kind, message, element)
     }
+
 }
 
 class ModuleClass {
