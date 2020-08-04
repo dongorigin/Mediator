@@ -1,8 +1,7 @@
 package cn.dong.mediator.checker
 
-import javax.lang.model.element.AnnotationMirror
-import javax.lang.model.element.AnnotationValue
-import javax.lang.model.element.Element
+import javax.lang.model.element.*
+import javax.lang.model.type.DeclaredType
 import javax.lang.model.type.TypeMirror
 import javax.lang.model.util.Elements
 
@@ -34,4 +33,14 @@ fun AnnotationMirror.findAnnotationValueWithDefaults(key: String, elementUtils: 
     return elementUtils.getElementValuesWithDefaults(this).entries // 包括默认值
         .find { it.key.simpleName.toString() == key }
         ?.value
+}
+
+fun Element.isMethod(): Boolean = kind == ElementKind.METHOD
+
+fun <A : Annotation> Element.isAnnotationPresent(annotationClass: Class<A>): Boolean {
+    return this.getAnnotation(annotationClass) != null
+}
+
+fun Element.getDeclaredTypeElement() : TypeElement {
+    return (asType() as DeclaredType).asElement() as TypeElement
 }

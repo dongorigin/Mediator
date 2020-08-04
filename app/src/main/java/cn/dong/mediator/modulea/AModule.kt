@@ -17,10 +17,14 @@ class AModule : BaseModule(), ServiceProvider<AService> {
     private val viewModel = AServiceViewModel()
 
     @ModuleService
-    private lateinit var engineProvider: EngineProvider
+    private val engineProvider: EngineProvider by lazy { TODO() }
 
     @ModuleService
     private lateinit var audioRecorderProvider: AudioRecorderProvider
 
     override fun provide(): AService = viewModel
+
+    fun foo() {
+        engineProvider.engineService
+    }
 }

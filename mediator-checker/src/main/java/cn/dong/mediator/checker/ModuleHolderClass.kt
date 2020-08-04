@@ -1,62 +1,51 @@
 package cn.dong.mediator.checker
 
 import cn.dong.mediator.annotation.Module
-import cn.dong.mediator.annotation.ModuleService
-import cn.dong.mediator.annotation.ModuleServiceProvider
 import javax.annotation.processing.Messager
-import javax.annotation.processing.RoundEnvironment
-import javax.lang.model.element.Element
-import javax.lang.model.element.ElementKind
-import javax.tools.Diagnostic
+import javax.annotation.processing.ProcessingEnvironment
+import javax.lang.model.element.TypeElement
+import javax.lang.model.type.TypeMirror
+import javax.lang.model.util.Types
 
 /**
  * @author zhaodong on 2020/07/07.
  */
-class ModuleHolderClass2(
-    val moduleHolderElement: Element,
-    val env: RoundEnvironment,
-    val messager: Messager
+class ModuleHolderClass(
+    private val holderElement: TypeElement,
+    private val env: ProcessingEnvironment
 ) {
 
-    val modules = mutableListOf<Element>()
-    val providedServices = mutableListOf<Class<*>>()
-    val requiredServices = mutableListOf<Class<*>>()
+    private val messager: Messager = env.messager
+    private val types: Types = env.typeUtils
+
+    private val modules = mutableListOf<ModuleClass>()
+    private val providedServices = mutableSetOf<TypeMirror>()
+    private val requiredServices = mutableSetOf<TypeMirror>()
 
     init {
-        messager.printMessage(Diagnostic.Kind.NOTE, "[moduleHolderElement:${moduleHolderElement},kind=${moduleHolderElement.kind},enclosed=${moduleHolderElement.enclosedElements}]")
-        for (holderElement in moduleHolderElement.enclosedElements) {
-            listOf("")
-            messager.printMessage(Diagnostic.Kind.NOTE, "[holderElement:${holderElement},kind=${holderElement.kind},enclosed=${holderElement.enclosedElements}]")
+        println("[moduleHolder:${holderElement},kind=${holderElement.kind},enclosed=${holderElement.enclosedElements}]")
 
-            if (holderElement.kind.isField
-                && holderElement.isAnnotationPresent(Module::class.java)
+        for (memberElement in env.elementUtils.getAllMembers(holderElement)) {
+            println("[holderMember:${memberElement},kind=${memberElement.kind},enclosed=${memberElement.enclosedElements}]")
+            println("annotation=${env.elementUtils.getAllAnnotationMirrors(memberElement)}")
+
+            if ((memberElement.kind.isField)
+                && memberElement.isAnnotationPresent(Module::class.java)
             ) {
-                modules.add(holderElement)
-                holderElement.javaClass.getAnnotation(ModuleServiceProvider::class.java)?.let { serviceProvider ->
-                    serviceProvider.value
-                    providedServices.addAll(serviceProvider.value.map { it.java })
-                }
-                for (moduleElement in holderElement.enclosedElements) {
-                    messager.printMessage(Diagnostic.Kind.NOTE,
-                        "[moduleElement:type=${moduleElement.asType()}, kind=${moduleElement.kind}]")
-                    if (moduleElement.kind.isField
-                        || moduleElement.kind == ElementKind.METHOD) {
-                        moduleElement.getAnnotation(ModuleService::class.java)?.let {
-
-//                            requiredServices.add(moduleElement)
-                        }
-                    }
-                }
-
+                println("isModule!, ${memberElement.getDeclaredTypeElement()}")
+                val moduleClass = ModuleClass(memberElement.getDeclaredTypeElement(), env)
+                modules.add(moduleClass)
+                providedServices.addAll(moduleClass.providedServices)
+                requiredServices.addAll(moduleClass.requiredServices)
             }
         }
     }
 
     fun check(): Boolean {
-        return false
-    }
-
-    fun <A : Annotation> Element.isAnnotationPresent(annotationClass: Class<A>): Boolean {
-        return this.getAnnotation(annotationClass) != null
+        println("check provide=$providedServices, required=$requiredServices")
+        for (requiredService in requiredServices) {
+            providedServices.find { types.isSameType(it, requiredService) } ?: return false
+        }
+        return true
     }
 }

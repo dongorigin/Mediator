@@ -2,17 +2,17 @@ package cn.dong.mediator
 
 import cn.dong.mediator.annotation.Module
 import cn.dong.mediator.modulea.AModule
-import cn.dong.mediator.moduleb.ModuleB
+import cn.dong.mediator.moduleb.BModule
 
 /**
  * @author zhaodong on 2020/07/03.
  */
-class ModuleHolder {
+open class BaseModuleHolder {
 
     @Module
-    val moduleA = AModule()
+    var moduleA = AModule()
 
     @Module
-    val moduleB = ModuleB()
+    val moduleB = BModule()
 
 }

@@ -1,5 +1,6 @@
 package cn.dong.mediator.checker
 
+import cn.dong.mediator.annotation.ModuleHolder
 import cn.dong.mediator.annotation.ModuleService
 import cn.dong.mediator.annotation.ModuleServiceProvider
 import javax.annotation.processing.*
@@ -7,15 +8,18 @@ import javax.lang.model.SourceVersion
 import javax.lang.model.element.Element
 import javax.lang.model.element.TypeElement
 import javax.lang.model.util.Elements
+import javax.lang.model.util.Types
 import javax.tools.Diagnostic.Kind
 
 /**
  * @author zhaodong on 2020/07/03.
  */
 class MediatorCheckerProcessor : AbstractProcessor() {
+
     private lateinit var elementUtils: Elements  // 元素操作辅助类
     private lateinit var messager: Messager  // 日志辅助类
     private lateinit var filer: Filer // 文件辅助类
+    private lateinit var types: Types
 
     @Synchronized
     override fun init(env: ProcessingEnvironment) {
@@ -23,6 +27,7 @@ class MediatorCheckerProcessor : AbstractProcessor() {
         elementUtils = env.elementUtils
         messager = env.messager
         filer = env.filer
+        types = env.typeUtils
     }
 
     override fun getSupportedAnnotationTypes(): Set<String> = setOf(
@@ -37,40 +42,13 @@ class MediatorCheckerProcessor : AbstractProcessor() {
     override fun process(elements: Set<TypeElement>, env: RoundEnvironment): Boolean {
         messager.printMessage(Kind.NOTE, "mediator checker process start~|")
 
-        val moduleHolderMap: MutableMap<Element, ModuleHolderClass> = mutableMapOf()
-        val moduleMap = mutableMapOf<Element, ModuleClass>()
-        // module
-        for (element in env.getElementsAnnotatedWith(ModuleServiceProvider::class.java)) {
-            val moduleClass = moduleMap.getOrDefault(element, ModuleClass())
-            val serviceProvider = element.findAnnotationMirror(ModuleServiceProvider::class.java)
-            val provideServices = serviceProvider?.findAnnotationValue("value")
-                ?.getClasses()
-            val optional = serviceProvider
-                ?.findAnnotationValueWithDefaults("optional", elementUtils)
-                ?.value
-            println("element: ${element.simpleName}, services: $provideServices, option=$optional")
+        // module holder
+        for (element in env.getElementsAnnotatedWith(ModuleHolder::class.java)) {
+            val moduleHolderClass = ModuleHolderClass(element as TypeElement, processingEnv)
+            if (!moduleHolderClass.check()) {
+                error(element, "module holder [${element.simpleName}] not valid")
+            }
         }
-
-//        // module
-//        for (element in env.getElementsAnnotatedWith(ModuleService::class.java)) {
-//            val moduleElement = element.enclosingElement
-//            val moduleClass = moduleMap.getOrDefault(moduleElement, ModuleClass())
-//            if (element is TypeElement) {
-////                printMessage(Kind.NOTE, element, element.asType().toString())
-//                moduleClass.requiredServices.add(element.asType().toString())
-//            }
-//        }
-
-//        // module holder
-//        for (element in env.getElementsAnnotatedWith(Module::class.java)) {
-//            val moduleHolderElement = element.enclosingElement
-//            val moduleHolderClass = moduleHolderMap.getOrDefault(
-//                moduleHolderElement,
-//                ModuleHolderClass()
-//            )
-//            moduleHolderClass
-//        }
-
         messager.printMessage(Kind.NOTE, "mediator checker process end~")
 
         return false
@@ -83,15 +61,5 @@ class MediatorCheckerProcessor : AbstractProcessor() {
     private fun printMessage(kind: Kind, element: Element, message: String?) {
         processingEnv.messager.printMessage(kind, message, element)
     }
-
-}
-
-class ModuleClass {
-    val providedServices = mutableListOf<String>()
-    val requiredServices = mutableListOf<String>()
-}
-
-class ModuleHolderClass {
-    val modules = mutableListOf<ModuleClass>()
 
 }

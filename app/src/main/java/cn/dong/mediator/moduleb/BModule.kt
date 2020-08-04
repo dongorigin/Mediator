@@ -9,7 +9,7 @@ import cn.dong.mediator.annotation.ModuleServiceProvider
  * @author zhaodong on 2020/07/02.
  */
 @ModuleServiceProvider(EngineProvider::class, AudioRecorderProvider::class)
-class ModuleB : BaseModule(), EngineProvider, AudioRecorderProvider {
+class BModule : BaseModule(), EngineProvider, AudioRecorderProvider {
 
     private var _engineService: EngineService? = null
 

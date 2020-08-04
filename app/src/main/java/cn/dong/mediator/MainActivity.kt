@@ -11,7 +11,7 @@ class MainActivity : AppCompatActivity() {
         private const val TAG = "MainActivity"
     }
 
-    private lateinit var moduleHolder: ModuleHolder
+    private lateinit var moduleHolder: ChildModuleHolder
 
     val viewModel: MainViewModel by viewModels()
 
@@ -33,7 +33,7 @@ class MainActivity : AppCompatActivity() {
     }
 
     private fun setupModules() {
-        moduleHolder = ModuleHolder()
+        moduleHolder = ChildModuleHolder()
         log("add observer before")
         // 问题：onResume 才注册，还会收到已经发生的事件通知吗？比如 onCreate、onStart
         // 实测会收到
