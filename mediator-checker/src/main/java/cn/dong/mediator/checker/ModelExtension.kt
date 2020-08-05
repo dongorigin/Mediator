@@ -44,3 +44,14 @@ fun <A : Annotation> Element.isAnnotationPresent(annotationClass: Class<A>): Boo
 fun Element.getDeclaredTypeElement() : TypeElement {
     return (asType() as DeclaredType).asElement() as TypeElement
 }
+
+/** 包括自己和继承的属性，包括父类的私有属性 */
+fun TypeElement.getAllMembers(): List<Element> {
+    val list = mutableListOf<Element>()
+    var element: TypeElement? = this
+    while (element != null) {
+        list.addAll(element.enclosedElements)
+        element = (element.superclass as? DeclaredType)?.asElement() as? TypeElement
+    }
+    return list
+}

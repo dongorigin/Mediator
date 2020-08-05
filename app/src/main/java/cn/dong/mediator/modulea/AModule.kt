@@ -11,16 +11,18 @@ import cn.dong.mediator.moduleb.EngineProvider
  * @author zhaodong on 2020/07/02.
  */
 @ModuleServiceProvider(AService::class)
-class AModule : BaseModule(), ServiceProvider<AService> {
+open class AModule : BaseModule(), ServiceProvider<AService> {
 
     private val view = AModuleView()
-    private val viewModel = AServiceViewModel()
+    private val viewModel = AModuleViewModel()
 
+    // property lazy
     @ModuleService
     private val engineProvider: EngineProvider by lazy { TODO() }
 
+    // property lateinit
     @ModuleService
-    private lateinit var audioRecorderProvider: AudioRecorderProvider
+    lateinit var AudioRecorderProvider: AudioRecorderProvider
 
     override fun provide(): AService = viewModel
 

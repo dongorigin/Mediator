@@ -42,24 +42,18 @@ class MediatorCheckerProcessor : AbstractProcessor() {
     override fun process(elements: Set<TypeElement>, env: RoundEnvironment): Boolean {
         messager.printMessage(Kind.NOTE, "mediator checker process start~|")
 
-        // module holder
         for (element in env.getElementsAnnotatedWith(ModuleHolder::class.java)) {
             val moduleHolderClass = ModuleHolderClass(element as TypeElement, processingEnv)
-            if (!moduleHolderClass.check()) {
-                error(element, "module holder [${element.simpleName}] not valid")
+            val missingServices = moduleHolderClass.findMissingServices()
+            if (missingServices.isNotEmpty()) {
+                error(element, "[${element.simpleName}] missing required services [$missingServices]")
             }
         }
         messager.printMessage(Kind.NOTE, "mediator checker process end~")
-
         return false
     }
 
     private fun error(element: Element, message: String) {
-        printMessage(Kind.ERROR, element, message)
+        processingEnv.messager.printMessage(Kind.ERROR, message, element)
     }
-
-    private fun printMessage(kind: Kind, element: Element, message: String?) {
-        processingEnv.messager.printMessage(kind, message, element)
-    }
-
 }

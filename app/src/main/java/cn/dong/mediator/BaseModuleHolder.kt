@@ -1,7 +1,7 @@
 package cn.dong.mediator
 
 import cn.dong.mediator.annotation.Module
-import cn.dong.mediator.modulea.AModule
+import cn.dong.mediator.modulea.ChildAModule
 import cn.dong.mediator.moduleb.BModule
 
 /**
@@ -10,9 +10,9 @@ import cn.dong.mediator.moduleb.BModule
 open class BaseModuleHolder {
 
     @Module
-    var moduleA = AModule()
+    val moduleA = ChildAModule()
 
     @Module
-    val moduleB = BModule()
+    lateinit var moduleB: BModule
 
 }
