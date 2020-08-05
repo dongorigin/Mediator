@@ -63,7 +63,17 @@ class ModuleClass(
     }
 
     /**
+     * Kotlin Property 可能包含 field 也可能不包含，比如 delegate 并不包含 field
+     * 所以 target 到 property 的注解，并没有标记在 field 上，而是标记在了一个特殊的方法上。
+     * 比如对于属性 title: String，注解标记的方法为：
+     * @ModuleService
+     * private static void title$annotations()
      *
+     * 另外属性还有一个 getter 方法用于调用：
+     * private final String getTitle() {
+     *
+     * 为了找到注解标记的 Kotlin 属性的类型，先通过注解找到上述特殊方法，然后根据方法名找到属性名和 getter 方法，
+     * 最后 getter 方法的返回值类型就是属性类型。
      */
     private fun findKotlinPropertyType(element: ExecutableElement, allMembers: List<Element>)
             : DeclaredType? {
