@@ -31,13 +31,7 @@ class ModuleHolderClass(
         println("[ModuleHolder]${holderElement.simpleName}: provide=$providedServices, required=$requiredServices")
     }
 
-    fun findMissingServices(): List<TypeMirror> {
-        val missingServices = mutableListOf<TypeMirror>()
-        for (requiredService in requiredServices) {
-            if (providedServices.find { env.typeUtils.isSameType(it, requiredService) } == null) {
-                missingServices.add(requiredService)
-            }
-        }
-        return missingServices
+    fun findMissingServices(): Set<TypeMirror> {
+        return requiredServices - providedServices
     }
 }

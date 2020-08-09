@@ -5,4 +5,4 @@ package cn.dong.mediator.annotation
  */
 @Retention(AnnotationRetention.RUNTIME)
 @Target(AnnotationTarget.FIELD, AnnotationTarget.PROPERTY, AnnotationTarget.FUNCTION)
-annotation class ModuleService(val optional: Boolean = false)
+annotation class ModuleService(val required: Boolean = true)

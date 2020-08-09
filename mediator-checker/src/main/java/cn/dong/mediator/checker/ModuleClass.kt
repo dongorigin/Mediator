@@ -24,12 +24,8 @@ class ModuleClass(
 
         // required services
         val allMembers = element.getAllMembers()
-        for (memberElement in allMembers) {
-            if (memberElement.isAnnotationPresent(ModuleService::class.java)) {
-                //        val optional = serviceProvider
-                //                ?.findAnnotationValueWithDefaults("optional", elementUtils)
-                //                ?.value
-
+        allMembers.filter { it.getAnnotation(ModuleService::class.java)?.required ?: false }
+            .forEach { memberElement ->
                 val service: DeclaredType? = when (memberElement) {
                     is VariableElement -> {
                         // Java 字段，用字段类型
@@ -53,7 +49,6 @@ class ModuleClass(
                     requiredServices.add(service)
                 }
             }
-        }
         println("[Module]${element.simpleName}: providedServices:$providedServices, requiredServices:$requiredServices")
     }
 
