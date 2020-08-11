@@ -1,6 +1,8 @@
 package cn.dong.mediator.moduleb
 
-import cn.dong.mediator.BaseModule
+import cn.dong.mediator.ILayoutManager
+import cn.dong.mediator.Module
+import cn.dong.mediator.RoomContext
 import cn.dong.mediator.annotation.ModuleServiceProvider
 
 /**
@@ -9,7 +11,7 @@ import cn.dong.mediator.annotation.ModuleServiceProvider
  * @author zhaodong on 2020/07/02.
  */
 @ModuleServiceProvider(EngineProvider::class, AudioRecorderProvider::class)
-class BModule : BaseModule(), EngineProvider, AudioRecorderProvider {
+class BModule(roomContext: RoomContext) : Module, EngineProvider, AudioRecorderProvider {
 
     private var _engineService: EngineService? = null
 
@@ -27,6 +29,10 @@ class BModule : BaseModule(), EngineProvider, AudioRecorderProvider {
 
     override val audioRecorder: AudioRecorder?
         get() = _engineService
+
+    override fun setup(layoutManager: ILayoutManager) {
+        TODO("Not yet implemented")
+    }
     //endregion
 
 }

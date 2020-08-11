@@ -12,8 +12,8 @@ import cn.dong.mediator.moduleb.BModule;
 public class JavaBaseModuleHolder {
 
     @Module
-    public AModule moduleA = new AModule();
+    public AModule moduleA = new AModule(roomContext);
 
     @Module
-    public BModule moduleB = new BModule();
+    public BModule moduleB = new BModule(roomContext);
 }

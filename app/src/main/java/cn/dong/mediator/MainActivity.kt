@@ -1,48 +1,44 @@
 package cn.dong.mediator
 
 import android.os.Bundle
-import android.util.Log
-import androidx.activity.viewModels
 import androidx.appcompat.app.AppCompatActivity
+import cn.dong.mediator.manifest.AManifest
+import cn.dong.mediator.manifest.BManifest
 
 class MainActivity : AppCompatActivity() {
 
-    companion object {
-        private const val TAG = "MainActivity"
-    }
-
-    private lateinit var moduleHolder: ChildModuleHolder
-
-    val viewModel: MainViewModel by viewModels()
+    private var moduleContainer: ModuleContainer? = null
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
-        log("onCreate")
-        setContentView(R.layout.activity_main)
+
+        // config
+        val config = RoomConfig.parse(intent.extras)
+        if (config == null) {
+            finish()
+            return
+        }
+
+        val roomContext = RoomContext()
+
+        // manifest
+        val manifest = when (config.type) {
+            RoomType.ROOM_A -> AManifest(roomContext)
+            RoomType.ROOM_B -> BManifest(roomContext)
+        }
+
+        val layoutId = manifest.getLayoutId()
+        if (layoutId != null) {
+            setContentView(layoutId)
+        }
+
+        val layoutManager = LayoutManager(window.decorView.rootView)
+
+        moduleContainer = ModuleContainer(lifecycle, manifest, layoutManager)
     }
 
-    override fun onStart() {
-        super.onStart()
-        log("onStart")
-    }
-
-    override fun onResume() {
-        super.onResume()
-        log("onResume")
-        setupModules()
-    }
-
-    private fun setupModules() {
-        moduleHolder = ChildModuleHolder()
-        log("add observer before")
-        // 问题：onResume 才注册，还会收到已经发生的事件通知吗？比如 onCreate、onStart
-        // 实测会收到
-        lifecycle.addObserver(moduleHolder.moduleA)
-        lifecycle.addObserver(moduleHolder.moduleB)
-        log("add observer after")
-    }
-
-    private fun log(message: String) {
-        Log.i(TAG, message)
+    override fun finish() {
+        moduleContainer?.destroy()
+        super.finish()
     }
 }
