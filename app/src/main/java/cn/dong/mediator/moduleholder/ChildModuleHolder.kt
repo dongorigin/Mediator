@@ -1,7 +1,7 @@
-package cn.dong.mediator
+package cn.dong.mediator.moduleholder
 
 import cn.dong.mediator.annotation.Module
-import cn.dong.mediator.modulec.CModule
+import cn.dong.mediator.module.modulec.CModule
 
 /**
  * @author zhaodong on 2020/08/04.

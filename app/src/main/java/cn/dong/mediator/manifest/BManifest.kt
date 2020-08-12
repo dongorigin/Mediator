@@ -2,6 +2,7 @@ package cn.dong.mediator.manifest
 
 import cn.dong.mediator.Module
 import cn.dong.mediator.ModuleManifest
+import cn.dong.mediator.R
 import cn.dong.mediator.RoomContext
 
 /**
@@ -11,5 +12,5 @@ class BManifest(roomContext: RoomContext) : ModuleManifest {
     override val modules: List<Module>
         get() = emptyList()
 
-    override fun getLayoutId(): Int? = null
+    override fun getLayoutId(): Int? = R.layout.room_b_layout
 }

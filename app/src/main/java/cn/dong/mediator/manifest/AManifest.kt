@@ -4,9 +4,9 @@ import cn.dong.mediator.Module
 import cn.dong.mediator.ModuleManifest
 import cn.dong.mediator.R
 import cn.dong.mediator.RoomContext
-import cn.dong.mediator.modulea.AModule
-import cn.dong.mediator.moduleb.BModule
-import cn.dong.mediator.modulec.CModule
+import cn.dong.mediator.module.modulea.AModule
+import cn.dong.mediator.module.moduleb.EngineModule
+import cn.dong.mediator.module.modulec.CModule
 
 /**
  * @author zhaodong on 2020/08/11.
@@ -14,8 +14,8 @@ import cn.dong.mediator.modulec.CModule
 class AManifest(roomContext: RoomContext) : ModuleManifest {
 
     private val _modules = mutableListOf(
-        AModule(roomContext),
-        BModule(roomContext),
+        AModule(),
+        EngineModule(),
         CModule()
     )
 
@@ -23,7 +23,7 @@ class AManifest(roomContext: RoomContext) : ModuleManifest {
         get() = _modules
 
     override fun getLayoutId(): Int {
-        return R.layout.activity_main
+        return R.layout.room_a_layout
     }
 
 }

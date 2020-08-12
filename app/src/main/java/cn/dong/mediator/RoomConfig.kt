@@ -6,16 +6,19 @@ import android.os.Bundle
  * @author zhaodong on 2020/08/11.
  */
 class RoomConfig(
-    val type: RoomType
+    val type: RoomType,
+    val roomId: Int
 ) {
 
     companion object {
 
         /** 返回 null 表示数据异常 */
         fun parse(bundle: Bundle?): RoomConfig? {
-            val typeValue = bundle?.getInt("type", 0)
+            if (bundle == null) return null
+            val typeValue = bundle.getInt("type", 0)
             val type = RoomType.values().find { it.type == typeValue } ?: return null
-            return RoomConfig(type)
+            val roomId = bundle.getInt("roomId")
+            return RoomConfig(type, roomId)
         }
     }
 }

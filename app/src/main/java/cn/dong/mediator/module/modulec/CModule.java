@@ -1,12 +1,12 @@
-package cn.dong.mediator.modulec;
+package cn.dong.mediator.module.modulec;
 
 import org.jetbrains.annotations.NotNull;
 
 import cn.dong.mediator.ILayoutManager;
 import cn.dong.mediator.Module;
 import cn.dong.mediator.annotation.ModuleService;
-import cn.dong.mediator.modulea.AService;
-import cn.dong.mediator.moduleb.AudioRecorderProvider;
+import cn.dong.mediator.module.modulea.AService;
+import cn.dong.mediator.module.moduleb.AudioRecorderProvider;
 
 /**
  * @author zhaodong on 2020/07/08.
@@ -25,6 +25,11 @@ public class CModule implements Module {
 
     @Override
     public void setup(@NotNull ILayoutManager layoutManager) {
+
+    }
+
+    @Override
+    public void onServiceReady() {
 
     }
 

@@ -13,6 +13,12 @@ class ModuleMediator {
         services[serviceClass] = service
     }
 
+    fun <T : Any> register(service: T) {
+        if (service is ServiceProvider<*>) {
+
+        }
+    }
+
     fun <T> findService(serviceClass: Class<T>): T? {
         return services[serviceClass] as? T
     }

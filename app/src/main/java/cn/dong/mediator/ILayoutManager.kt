@@ -7,10 +7,6 @@ import android.view.View
  */
 interface ILayoutManager {
 
-
-    /** 兼容逻辑 */
-    fun findViewById(id: Int): View?
-
     /** 兼容逻辑 */
     val rootView: View
 

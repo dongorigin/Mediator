@@ -1,4 +1,4 @@
-package cn.dong.mediator.moduleb
+package cn.dong.mediator.module.moduleb
 
 /**
  * @author zhaodong on 2020/07/02.

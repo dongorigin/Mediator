@@ -9,18 +9,23 @@ import androidx.lifecycle.LifecycleOwner
  */
 class ModuleContainer(
     lifecycle: Lifecycle,
+    val roomContext: RoomContext,
     val manifest: ModuleManifest,
     val layoutManager: ILayoutManager
 ) : DefaultLifecycleObserver {
 
     init {
         lifecycle.addObserver(this)
+        setup()
     }
 
-    fun setup() {
-        // todo 布局？
+    private fun setup() {
         for (module in manifest.modules) {
             module.setup(layoutManager)
+            roomContext.mediator.register(module)
+        }
+        for (module in manifest.modules) {
+            module.onServiceReady()
         }
     }
 
